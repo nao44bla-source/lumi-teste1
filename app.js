@@ -372,4 +372,37 @@ document.addEventListener('DOMContentLoaded', function() {
     configurarAbas();
     
     console.log('✅ Sistema Lumi totalmente configurado!');
+
 });
+// Tentar conectar com a IA online - ATUALIZADA
+async function tentarConexaoIA(mensagem) {
+    try {
+        console.log('🌐 Tentando conectar com DeepSeek...');
+        
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ mensagem: mensagem })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (data.resposta) {
+            console.log('✅ Resposta IA recebida');
+            return data.resposta;
+        } else {
+            throw new Error('Resposta vazia');
+        }
+
+    } catch (error) {
+        console.log('❌ IA offline:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return null;
+    }
+}
